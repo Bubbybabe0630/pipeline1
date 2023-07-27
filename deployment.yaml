@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bwa-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bwa
+  template:
+    metadata:
+      labels:
+        app: bwa
+    spec:
+      containers:
+      - name: bwa
+        image: 996796683454.dkr.ecr.us-east-1.amazonaws.com/bwa
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+# service type loadbalancer       
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: bwa
+    k8s-app: bwa
+  name: bwa
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  type: LoadBalancer
+  selector:
+    app: bwa
